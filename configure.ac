@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.61])
-AC_INIT([mosh], [1.2.4], [mosh-devel@mit.edu])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AC_INIT([mosh], [1.2.4a], [mosh-devel@mit.edu])
+AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_CONFIG_SRCDIR([src/frontend/mosh-client.cc])
 AC_CONFIG_MACRO_DIR([m4])
@@ -170,7 +170,28 @@ AC_SEARCH_LIBS([socket], [socket])
 AC_SEARCH_LIBS([inet_addr], [nsl])
 
 # Checks for header files.
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h langinfo.h limits.h locale.h netinet/in.h stddef.h stdint.h inttypes.h stdlib.h string.h sys/ioctl.h sys/resource.h sys/socket.h sys/stat.h sys/time.h termios.h unistd.h wchar.h wctype.h], [], [AC_MSG_ERROR([Missing required header file.])])
+AC_CHECK_HEADERS([m4_normalize([
+  fcntl.h
+  langinfo.h
+  limits.h
+  locale.h
+  netdb.h
+  netinet/in.h
+  stddef.h
+  stdint.h
+  inttypes.h
+  stdlib.h
+  string.h
+  sys/ioctl.h
+  sys/resource.h
+  sys/socket.h
+  sys/stat.h
+  sys/time.h
+  termios.h
+  unistd.h
+  wchar.h
+  wctype.h
+  ])], [], [AC_MSG_ERROR([Missing required header file.])])
 
 AC_CHECK_HEADERS([pty.h util.h libutil.h paths.h])
 AC_CHECK_HEADERS([endian.h sys/endian.h])
@@ -195,7 +216,30 @@ AC_TYPE_UINTPTR_T
 # Checks for library functions.
 AC_FUNC_FORK
 AC_FUNC_MBRTOWC
-AC_CHECK_FUNCS([gettimeofday setrlimit inet_ntoa iswprint memchr memset nl_langinfo posix_memalign setenv setlocale sigaction socket strchr strdup strncasecmp strtok strerror strtol wcwidth cfmakeraw])
+AC_CHECK_FUNCS([m4_normalize([
+  gettimeofday
+  setrlimit
+  iswprint
+  memchr
+  memset
+  nl_langinfo
+  posix_memalign
+  setenv
+  setlocale
+  sigaction
+  socket
+  strchr
+  strdup
+  strncasecmp
+  strtok
+  strerror
+  strtol
+  wcwidth
+  cfmakeraw
+  pselect
+  getaddrinfo
+  getnameinfo
+  ])])
 
 AC_SEARCH_LIBS([clock_gettime], [rt], [AC_DEFINE([HAVE_CLOCK_GETTIME], [1], [Define if clock_gettime is available.])])
 
@@ -285,19 +329,21 @@ AC_CHECK_DECL([mach_absolute_time],
      [Define if mach_absolute_time is available.])],
   , [[#include <mach/mach_time.h>]])
 
-AC_CHECK_DECL([htobe64],
-  [AC_DEFINE([HAVE_HTOBE64], [1],
-  [Define if htobe64 and friends exist.])],
+AC_CHECK_DECLS([be64toh, betoh64], [], [],
+  [[#if defined(HAVE_ENDIAN_H)
+#include <endian.h>
+#elif defined(HAVE_SYS_ENDIAN_H)
+#include <sys/types.h>
+#include <sys/endian.h>
+#endif]])
+
+AS_IF([test x"$ac_cv_have_decl_be64toh" != xyes &&
+       test x"$ac_cv_have_decl_betoh64" != xyes],
   [AC_CHECK_DECL([OSSwapHostToBigInt64],
      [AC_DEFINE([HAVE_OSX_SWAP], [1],
         [Define if OSSwapHostToBigInt64 and friends exist.])],
      [AC_MSG_WARN([Unable to find byte swapping functions; using built-in routines.])],
-     [[#include <libkern/OSByteOrder.h>]])],
-  [[#if defined(HAVE_ENDIAN_H)
-#include <endian.h>
-#elif defined(HAVE_SYS_ENDIAN_H)
-#include <sys/endian.h>
-#endif]])
+     [[#include <libkern/OSByteOrder.h>]])])
 
 AC_CHECK_DECL([IP_MTU_DISCOVER],
   [AC_DEFINE([HAVE_IP_MTU_DISCOVER], [1],

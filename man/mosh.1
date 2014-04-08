@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH MOSH 1 "October 2012"
+.TH MOSH 1 "April 2013"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -121,12 +121,42 @@ Synonym for \-\-predict=always
 Synonym for \-\-predict=never
 
 .TP
+.B --family=\fIFAMILY\fP
+Force the use of a particular address family, which defaults to `inet'
+(IPv4), and can also be `inet6' (IPv6; requires IO::Socket::IP).
+
+.TP
+.B -4
+Synonym for \-\-family=inet
+
+.TP
+.B -6
+Synonym for \-\-family=inet6
+
+.TP
 .B \-p \fIPORT\fP[:\fIPORT2\fP], \-\-port=\fIPORT\fP[:\fIPORT2\fP]
 Use a particular server-side UDP port or port range,
 for example, if this is the
 only port that is forwarded through a firewall to the
 server. Otherwise, \fBmosh\fP will choose a port between 60000 and
 61000.
+
+.TP
+.B \-\-bind\-server={ssh|any|\fIIP\fP}
+Control the IP address that the \fBmosh-server\fP binds to.
+
+The default is `ssh', in which case the server will reply from the IP
+address that the SSH connection came from (as found in the
+\fBSSH_CONNECTION\fP environment variable). This is useful for
+multihomed servers.
+
+With \-\-bind\-server=any, the server will reply on the default interface
+and will not bind to a particular IP address. This can be useful if
+the connection is made through \fBsslh\fP or another tool that makes
+the SSH connection appear to come from localhost.
+
+With \-\-bind\-server=\fIIP\fP, the server will attempt to bind to the
+specified IP address.
 
 .TP
 .B \-\-no\-init
