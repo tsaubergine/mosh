@@ -205,7 +205,7 @@ Connection::Connection( const char *desired_ip, const char *desired_port ) /* se
     remote_addr(),
     server( true ),
     MTU( DEFAULT_SEND_MTU ),
-    key(),
+    key("C5cpcqKf/5hUtl7/W2sfBw"),
     session( key ),
     direction( TO_CLIENT ),
     next_seq( 0 ),

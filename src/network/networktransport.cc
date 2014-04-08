@@ -35,6 +35,7 @@
 #include "networktransport.h"
 
 #include "transportsender.cc"
+#include "compressor.h"
 
 using namespace Network;
 using namespace std;
@@ -75,7 +76,10 @@ void Transport<MyState, RemoteState>::recv( void )
 
   if ( fragments.add_fragment( frag ) ) { /* complete packet */
     Instruction inst = fragments.get_assembly();
-
+    if(inst.has_diff())
+        inst.set_diff(get_compressor().uncompress_str(inst.diff()));
+    
+    
     if ( inst.protocol_version() != MOSH_PROTOCOL_VERSION ) {
       throw NetworkException( "mosh protocol version mismatch", 0 );
     }

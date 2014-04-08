@@ -38,6 +38,8 @@
 
 #include "transportsender.h"
 #include "transportfragment.h"
+#include "compressor.h"
+
 
 #include <limits.h>
 
@@ -77,6 +79,10 @@ unsigned int TransportSender<MyState>::send_interval( void ) const
     SEND_INTERVAL = SEND_INTERVAL_MAX;
   }
 
+  if(verbose)
+      printf("Send interval: %d\n", SEND_INTERVAL);
+  
+  
   return SEND_INTERVAL;
 }
 
@@ -313,7 +319,8 @@ void TransportSender<MyState>::send_in_fragments( string diff, uint64_t new_num 
   inst.set_new_num( new_num );
   inst.set_ack_num( ack_num );
   inst.set_throwaway_num( sent_states.front().num );
-  inst.set_diff( diff );
+  if(!diff.empty())
+      inst.set_diff( get_compressor().compress_str(diff) );
   inst.set_chaff( make_chaff() );
 
   if ( new_num == uint64_t(-1) ) {
@@ -326,15 +333,16 @@ void TransportSender<MyState>::send_in_fragments( string diff, uint64_t new_num 
         i != fragments.end();
         i++ ) {
     connection->send( i->tostring() );
-
+    
     if ( verbose ) {
-      fprintf( stderr, "[%u] Sent [%d=>%d] id %d, frag %d ack=%d, throwaway=%d, len=%d, frame rate=%.2f, timeout=%d, srtt=%.1f\n",
-	       (unsigned int)(timestamp() % 100000), (int)inst.old_num(), (int)inst.new_num(), (int)i->id, (int)i->fragment_num,
-	       (int)inst.ack_num(), (int)inst.throwaway_num(), (int)i->contents.size(),
-	       1000.0 / (double)send_interval(),
-	       (int)connection->timeout(), connection->get_SRTT() );
+        
+        fprintf( stderr, "[%u] Sent [%d=>%d] id %d, frag %d ack=%d, throwaway=%d, len=%d, frame rate=%.2f, timeout=%d, srtt=%.1f\n",
+                 (unsigned int)(timestamp() % 100000), (int)inst.old_num(), (int)inst.new_num(), (int)i->id, (int)i->fragment_num,
+                 (int)inst.ack_num(), (int)inst.throwaway_num(), (int)i->contents.size(),
+                 1000.0 / (double)send_interval(),
+                 (int)connection->timeout(), connection->get_SRTT() );
     }
-
+    
   }
 
   pending_data_ack = false;

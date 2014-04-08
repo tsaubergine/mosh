@@ -41,9 +41,9 @@ using namespace std;
 string Compressor::compress_str( const string &input )
 {
   long unsigned int len = BUFFER_SIZE;
-  dos_assert( Z_OK == compress( buffer, &len,
+  dos_assert( Z_OK == compress2( buffer, &len,
 				reinterpret_cast<const unsigned char *>( input.data() ),
-				input.size() ) );
+                                 input.size(), Z_BEST_COMPRESSION ) );
   return string( reinterpret_cast<char *>( buffer ), len );
 }
 
