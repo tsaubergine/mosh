@@ -102,20 +102,32 @@ void TransportSender<MyState>::calculate_timers( void )
     if ( mindelay_clock == uint64_t( -1 ) ) {
       mindelay_clock = now;
     }
-
+    
     next_send_time = max( mindelay_clock + SEND_MINDELAY,
 			  sent_states.back().timestamp + send_interval() );
+
+    if (verbose ) { printf ("Next send time:  max( mindelay_clock + SEND_MINDELAY, sent_states.back().timestamp + send_interval() );\n"); }
+
   } else if ( !(current_state == assumed_receiver_state->state)
 	      && (last_heard + ACTIVE_RETRY_TIMEOUT > now) ) {
     next_send_time = sent_states.back().timestamp + send_interval();
+
+    if (verbose ) { printf ("Next send time: sent_states.back().timestamp + send_interval();\n");
+        printf("sent_states.back().timestamp: %lu\n", sent_states.back().timestamp);}
+
     if ( mindelay_clock != uint64_t( -1 ) ) {
       next_send_time = max( next_send_time, mindelay_clock + SEND_MINDELAY );
+      if (verbose ) { printf ("Next send time: max( next_send_time, mindelay_clock + SEND_MINDELAY );\n"); }
+
     }
   } else if ( !(current_state == sent_states.front().state )
 	      && (last_heard + ACTIVE_RETRY_TIMEOUT > now) ) {
     next_send_time = sent_states.back().timestamp + connection->timeout() + ACK_DELAY;
+    if (verbose ) { printf ("Next send time: sent_states.back().timestamp + connection->timeout() + ACK_DELAY;\n"); }
+
   } else {
     next_send_time = uint64_t(-1);
+    if (verbose ) { printf ( "Next send time: uint64_t(-1);\n" ); }
   }
 
   /* speed up shutdown sequence */

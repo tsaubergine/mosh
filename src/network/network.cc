@@ -525,7 +525,7 @@ string Connection::recv_one( int sock_to_recv, bool nonblocking )
       uint16_t now = timestamp16();
       double R = timestamp_diff( now, p.timestamp_reply );
 
-      if ( R < 5000 ) { /* ignore large values, e.g. server was Ctrl-Zed */
+//    if ( R < 5000 ) { /* ignore large values, e.g. server was Ctrl-Zed */
 	if ( !RTT_hit ) { /* first measurement */
 	  SRTT = R;
 	  RTTVAR = R / 2;
@@ -537,7 +537,7 @@ string Connection::recv_one( int sock_to_recv, bool nonblocking )
 	  RTTVAR = (1 - beta) * RTTVAR + ( beta * fabs( SRTT - R ) );
 	  SRTT = (1 - alpha) * SRTT + ( alpha * R );
 	}
-      }
+//    }
     }
 
     /* auto-adjust to remote host */

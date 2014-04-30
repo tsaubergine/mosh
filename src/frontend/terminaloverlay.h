@@ -149,8 +149,8 @@ namespace Overlay {
     uint64_t message_expiration;
     bool show_quit_keystroke;
 
-    bool server_late( uint64_t ts ) const { return (ts - last_word_from_server) > 6500; }
-    bool reply_late( uint64_t ts ) const { return (ts - last_acked_state) > 10000; }
+    bool server_late( uint64_t ts ) const { return (ts - last_word_from_server) > 25000; }
+    bool reply_late( uint64_t ts ) const { return (ts - last_acked_state) > 20000; }
     bool need_countup( uint64_t ts ) const { return server_late( ts ) || reply_late( ts ); }
 
   public:
