@@ -532,10 +532,10 @@ void STMClient::main( void )
 	   && (!network->shutdown_in_progress())
 	   && (timestamp() - network->get_latest_remote_state().timestamp > 250) ) {
 	if ( timestamp() - network->get_latest_remote_state().timestamp > 15000 ) {
-	  if ( !network->shutdown_in_progress() ) {
-	    overlays.get_notification_engine().set_notification_string( wstring( L"Timed out waiting for server..." ), true );
-	    network->start_shutdown();
-	  }
+//	  if ( !network->shutdown_in_progress() ) {
+//	    overlays.get_notification_engine().set_notification_string( wstring( L"Timed out waiting for server..." ), true );
+//	    network->start_shutdown();
+//	  }
 	} else {
 	  overlays.get_notification_engine().set_notification_string( connecting_notification );
 	}

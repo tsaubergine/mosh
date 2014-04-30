@@ -717,12 +717,12 @@ void serve( int host_fd, Terminal::Complete &terminal, ServerConnection &network
 	}
       }
 
-      if ( !network.get_remote_state_num()
-           && time_since_remote_state >= uint64_t( timeout_if_no_client ) ) {
-        fprintf( stderr, "No connection within %d seconds.\n",
-                 timeout_if_no_client / 1000 );
-        break;
-      }
+      // if ( !network.get_remote_state_num()
+      //      && time_since_remote_state >= uint64_t( timeout_if_no_client ) ) {
+      //   fprintf( stderr, "No connection within %d seconds.\n",
+      //            timeout_if_no_client / 1000 );
+      //   break;
+      // }
 
       network.tick();
     } catch ( const Network::NetworkException& e ) {

@@ -79,10 +79,6 @@ unsigned int TransportSender<MyState>::send_interval( void ) const
     SEND_INTERVAL = SEND_INTERVAL_MAX;
   }
 
-  if(verbose)
-      printf("Send interval: %d\n", SEND_INTERVAL);
-  
-  
   return SEND_INTERVAL;
 }
 

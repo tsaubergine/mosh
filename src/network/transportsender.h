@@ -51,8 +51,8 @@ namespace Network {
   /* timing parameters */
   const int SEND_INTERVAL_MIN = 100; /* ms between frames */
   const int SEND_INTERVAL_MAX = 2000; /* ms between frames */
-  const int ACK_INTERVAL = 3000; /* ms between empty acks */
-  const int ACK_DELAY = 100; /* ms before delayed ack */
+  const int ACK_INTERVAL = 5000; /* ms between empty acks */
+  const int ACK_DELAY = 500; /* ms before delayed ack */
   const int SHUTDOWN_RETRIES = 16; /* number of shutdown packets to send before giving up */
   const int ACTIVE_RETRY_TIMEOUT = 10000; /* attempt to resend at frame rate */
 
