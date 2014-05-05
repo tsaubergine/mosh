@@ -168,7 +168,7 @@ namespace Network {
     string recv_one( int sock_to_recv, bool nonblocking );
 
   public:
-    Connection( const char *desired_ip, const char *desired_port ); /* server */
+    Connection( const char *desired_ip, const char *desired_port, const Base64Key& k = Base64Key() ); /* server */
     Connection( const char *key_str, const char *ip, const char *port ); /* client */
 
     void send( string s );

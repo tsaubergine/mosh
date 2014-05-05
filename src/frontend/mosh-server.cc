@@ -96,7 +96,7 @@ void serve( int host_fd,
 
 int run_server( const char *desired_ip, const char *desired_port,
 		const string &command_path, char *command_argv[],
-		const int colors, bool verbose, bool with_motd );
+		const int colors, bool verbose, bool with_motd, const char *fixed_key);
 
 using namespace std;
 
@@ -168,6 +168,7 @@ int main( int argc, char *argv[] )
   bool verbose = false; /* don't close stdin/stdout/stderr */
   /* Will cause mosh-server not to correctly detach on old versions of sshd. */
   list<string> locale_vars;
+  const char *fixed_key = NULL;
 
   /* strip off command */
   for ( int i = 0; i < argc; i++ ) {
@@ -185,7 +186,7 @@ int main( int argc, char *argv[] )
        && (strcmp( argv[ 1 ], "new" ) == 0) ) {
     /* new option syntax */
     int opt;
-    while ( (opt = getopt( argc - 1, argv + 1, "i:p:c:svl:" )) != -1 ) {
+    while ( (opt = getopt( argc - 1, argv + 1, "i:p:c:svl:k:" )) != -1 ) {
       switch ( opt ) {
       case 'i':
 	desired_ip = optarg;
@@ -206,6 +207,9 @@ int main( int argc, char *argv[] )
 	break;
       case 'l':
 	locale_vars.push_back( string( optarg ) );
+	break;
+      case 'k':
+	fixed_key = optarg;
 	break;
       default:
 	print_usage( argv[ 0 ] );
@@ -308,7 +312,7 @@ int main( int argc, char *argv[] )
   }
 
   try {
-    return run_server( desired_ip, desired_port, command_path, command_argv, colors, verbose, with_motd );
+      return run_server( desired_ip, desired_port, command_path, command_argv, colors, verbose, with_motd, fixed_key );
   } catch ( const Network::NetworkException& e ) {
     fprintf( stderr, "Network exception: %s: %s\n",
 	     e.function.c_str(), strerror( e.the_errno ) );
@@ -322,7 +326,7 @@ int main( int argc, char *argv[] )
 
 int run_server( const char *desired_ip, const char *desired_port,
 		const string &command_path, char *command_argv[],
-		const int colors, bool verbose, bool with_motd ) {
+		const int colors, bool verbose, bool with_motd, const char* fixed_key ) {
   /* get initial window size */
   struct winsize window_size;
   if ( ioctl( STDIN_FILENO, TIOCGWINSZ, &window_size ) < 0 ||
@@ -342,7 +346,9 @@ int run_server( const char *desired_ip, const char *desired_port,
 
   /* open network */
   Network::UserStream blank;
-  ServerConnection *network = new ServerConnection( terminal, blank, desired_ip, desired_port );
+  
+  ServerConnection *network = new ServerConnection( terminal, blank, desired_ip, desired_port,
+                                                    fixed_key ? Base64Key(fixed_key) : Base64Key());
 
   if ( verbose ) {
     network->set_verbose();

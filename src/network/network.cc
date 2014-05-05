@@ -216,14 +216,14 @@ private:
   AddrInfo &operator=(const AddrInfo &);
 };
 
-Connection::Connection( const char *desired_ip, const char *desired_port ) /* server */
+Connection::Connection( const char *desired_ip, const char *desired_port, const Base64Key& k /*= Base64Key()*/) /* server */
   : socks(),
     has_remote_addr( false ),
     remote_addr(),
     remote_addr_len( 0 ),
     server( true ),
     MTU( DEFAULT_SEND_MTU ),
-    key("C5cpcqKf/5hUtl7/W2sfBw"),
+    key(k),
     session( key ),
     direction( TO_CLIENT ),
     next_seq( 0 ),
